@@ -20,10 +20,15 @@ public class VisitServiceBean implements VisitService {
 
   @Override
   public Visit createVisitForToday(String identificationNumber) {
-    return loadPetByIdentificationNumber(identificationNumber)
-            .map(this::createVisitForPet)
-            .map(this::saveVisit)
-            .orElse(null);
+    Optional<Pet> pet = loadPetByIdentificationNumber(identificationNumber);
+
+    if (!pet.isPresent()) {
+      return null;
+    }
+
+    return saveVisit(
+        createVisitForPet(pet.get())
+    );
   }
 
 
