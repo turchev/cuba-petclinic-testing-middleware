@@ -7,10 +7,10 @@
       maxTotal="20"
       maxIdle="2"
       maxWaitMillis="5000"
-      driverClassName="org.hsqldb.jdbc.JDBCDriver"
-      url="jdbc:hsqldb:hsql://localhost/petclinic"
-      username="sa"
-      password=""/>
+      driverClassName="org.postgresql.Driver"
+      url="jdbc:postgresql://10.199.21.59/petclinic"
+      username="cuba"
+      password="2wsx!QAZD"/>
 
     <!-- Switch off session serialization -->
     <Manager pathname=""/>

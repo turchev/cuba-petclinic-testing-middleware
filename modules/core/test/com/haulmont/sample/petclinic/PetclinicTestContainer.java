@@ -6,6 +6,7 @@ import org.dom4j.Document;
 import org.dom4j.Element;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
+
 import java.io.File;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -27,10 +28,11 @@ public class PetclinicTestContainer extends TestContainer {
         appPropertiesFiles = Arrays.asList(
                 // List the files defined in your web.xml
                 // in appPropertiesConfig context parameter of the core module
-            "com/haulmont/sample/petclinic/app.properties",
+                "com/haulmont/sample/petclinic/app.properties",
                 // Add this file which is located in CUBA and defines some properties
                 // specifically for test environment. You can replace it with your own
                 // or add another one in the end.
+                "com/haulmont/sample/petclinic/test-app.properties",
                 "com/haulmont/cuba/testsupport/test-app.properties");
         initDbProperties();
     }
@@ -64,13 +66,20 @@ public class PetclinicTestContainer extends TestContainer {
             throw new RuntimeException("Cannot find 'context.xml' file to read database connection properties. " +
                     "You can set them explicitly in this method.");
         }
+
         Document contextXmlDoc = Dom4j.readDocument(contextXmlFile);
         Element resourceElem = contextXmlDoc.getRootElement().element("Resource");
 
-        Optional.ofNullable(resourceElem.attributeValue("driverClassName")).ifPresent(e -> dbDriver = e);
-        Optional.ofNullable(resourceElem.attributeValue("url")).ifPresent(e -> dbUrl = e);
-        Optional.ofNullable(resourceElem.attributeValue("username")).ifPresent(e -> dbUser = e);
-        Optional.ofNullable(resourceElem.attributeValue("password")).ifPresent(e -> dbPassword = e);
+//        Optional.ofNullable(resourceElem.attributeValue("driverClassName")).ifPresent(e -> dbDriver = e);
+//        Optional.ofNullable(resourceElem.attributeValue("url")).ifPresent(e -> dbUrl = e);
+//        Optional.ofNullable(resourceElem.attributeValue("username")).ifPresent(e -> dbUser = e);
+//        Optional.ofNullable(resourceElem.attributeValue("password")).ifPresent(e -> dbPassword = e);
+
+        dbDriver = resourceElem.attributeValue("driverClassName");
+        dbUrl = "jdbc:postgresql://10.199.21.59/petclinic_test";
+        dbUser = resourceElem.attributeValue("username");
+        dbPassword = resourceElem.attributeValue("password");
+
     }
 
     public static class Common extends PetclinicTestContainer {
