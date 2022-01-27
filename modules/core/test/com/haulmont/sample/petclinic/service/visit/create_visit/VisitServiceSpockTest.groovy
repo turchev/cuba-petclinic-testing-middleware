@@ -13,7 +13,8 @@ import spock.lang.Specification
 
 class VisitServiceSpockTest extends Specification {
 
-    @Shared  @ClassRule
+    @Shared
+    @ClassRule
     public PetclinicTestContainer testContainer = PetclinicTestContainer.Common.INSTANCE
 
     private static TimeSource timeSource
@@ -32,7 +33,7 @@ class VisitServiceSpockTest extends Specification {
         pikachu = db.petWithName("Pikachu", "pet-with-owner-and-type")
     }
 
-    def "createVisitForToday_createsANewVisit_forTheCorrectPet" () {
+    def "createVisitForToday_createsANewVisit_forTheCorrectPet"() {
 
         given:
         def countVisitsBeforeService = db.countVisitsFor(pikachu)
@@ -42,33 +43,33 @@ class VisitServiceSpockTest extends Specification {
 
         then:
         db.countVisitsFor(pikachu) - countVisitsBeforeService == 1
+        and:
+        countVisitsBeforeService == 1
+
     }
 
-    def cleanup() {
-        db.remove(visit);
+    def "createVisitForToday_createsANewVisit_withTheCorrectVisitInformation"() {
+
+        given: "count of visits for pet pikachu"
+        def countVisitsBeforeService = db.countVisitsFor(pikachu)
+        and: "calendar with the current and visit  day of the year"
+        def currentDayOfYear = Calendar.getInstance().get(Calendar.DAY_OF_YEAR)
+        def visitDayOfYear = Calendar.getInstance()
+
+        when:
+        visit = visitService.createVisitForToday(pikachu.getIdentificationNumber())
+        visitDayOfYear.setTime(visit.getVisitDate())
+
+        then:
+        countVisitsBeforeService == 1
+        visit.getPet() == pikachu
+        and:
+        visitDayOfYear.get(Calendar.DAY_OF_YEAR) == currentDayOfYear
+
     }
 
 
-//    @Test
-//    public void createVisitForToday_createsANewVisit_withTheCorrectVisitInformation() {
-//
-//        // given:
-//        assertThat(db.countVisitsFor(pikachu))
-//                .isEqualTo(1);
-//
-//        // when:
-//        visit = visitService.createVisitForToday(pikachu.getIdentificationNumber());
-//
-//        // then:
-//        assertThat(visit.getPet())
-//                .isEqualTo(pikachu);
-//
-//        // and:
-//        assertThat(visit.getVisitDate())
-//                .isInSameDayAs(timeSource.currentTimestamp());
-//
-//    }
-//
+
 //    @Test
 //    public void createVisitForToday_createsNoVisit_forAnIncorrectIdentificationNumber() {
 //
@@ -93,9 +94,8 @@ class VisitServiceSpockTest extends Specification {
 //                .isEqualTo(amountOfVisitsBefore);
 //    }
 //
-//    @AfterEach
-//    public void cleanupVisit() {
-//        db.remove(visit);
-//    }
+    def cleanup() {
+        db.remove(visit);
+    }
 
 }
