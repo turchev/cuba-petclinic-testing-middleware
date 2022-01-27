@@ -68,32 +68,26 @@ class VisitServiceSpockTest extends Specification {
 
     }
 
+    def "createVisitForToday_createsNoVisit_forAnIncorrectIdentificationNumber" () {
 
+        given:
+        String incorrectIdentificationNumber = "IncorrectIdentificationNumber";
+        Optional nonExistentPet
+        and:
+        Long amountOfVisitsBefore = db.countVisits();
 
-//    @Test
-//    public void createVisitForToday_createsNoVisit_forAnIncorrectIdentificationNumber() {
-//
-//        // given:
-//        String incorrectIdentificationNumber = "IncorrectIdentificationNumber";
-//
-//        assertThat(db.petWithIdentificationNumber(incorrectIdentificationNumber))
-//                .isNotPresent();
-//
-//        // and:
-//        Long amountOfVisitsBefore = db.countVisits();
-//
-//        // when:
-//        visit = visitService.createVisitForToday(incorrectIdentificationNumber);
-//
-//        // then:
-//        assertThat(visit)
-//                .isNull();
-//
-//        // and:
-//        assertThat(db.countVisits())
-//                .isEqualTo(amountOfVisitsBefore);
-//    }
-//
+        when:
+        nonExistentPet  = db.petWithIdentificationNumber(incorrectIdentificationNumber)
+        and:
+        visit = visitService.createVisitForToday(incorrectIdentificationNumber);
+
+        then:
+        nonExistentPet.isEmpty()
+        visit == null
+        and:
+        db.countVisits() == amountOfVisitsBefore
+    }
+
     def cleanup() {
         db.remove(visit);
     }
